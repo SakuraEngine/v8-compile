@@ -3,7 +3,7 @@ name: build 11.4
 on: [push, pull_request]
 
 env:
-    V8_VERSION: 11.4-lkgr
+    V8_VERSION: 12.1-lkgr
 
 jobs:
   build-windows:
