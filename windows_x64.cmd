@@ -5,7 +5,6 @@ cd %HOMEPATH%
 echo =====[ Getting Depot Tools ]=====
 call git clone https://chromium.googlesource.com/chromium/tools/depot_tools
 set PATH=%CD%\depot_tools;%PATH%
-set GYP_MSVS_VERSION=2019
 set DEPOT_TOOLS_WIN_TOOLCHAIN=0
 call gclient
 
@@ -15,8 +14,6 @@ cd v8
 call fetch v8
 cd v8
 call git checkout %V8_VERSION%
-call git pull
-call git clean -fdx
 cd test\test262\data
 call git config --system core.longpaths true
 call git restore *
@@ -25,7 +22,6 @@ call gclient sync -D
 
 
 echo =====[ Building V8 ]=====
-call gn gen out.gn\x64.release
 call gn gen out.gn\x64.release --args="target_os=""win"" target_cpu=""x64"" dcheck_always_on=false treat_warnings_as_errors=false v8_use_external_startup_data=false is_official_build=true v8_enable_test_features=false v8_monolithic=false v8_enable_i18n_support=false is_debug=false is_clang=false strip_debug_info=true v8_symbol_level=0 v8_enable_pointer_compression=false is_component_build=true v8_static_library=false"
 
 call ninja -C out.gn\x64.release -t clean
