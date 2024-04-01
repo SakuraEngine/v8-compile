@@ -1,4 +1,10 @@
- V8_VERSION=%1
+V8_VERSION=%1
+
+git config --global user.name "V8 Windows Builder"
+git config --global user.email "v8.windows.builder@localhost"
+git config --global core.autocrlf false
+git config --global core.filemode false
+git config --global color.ui true
 
 cd %HOMEPATH%
 
@@ -8,24 +14,20 @@ powershell -command "Invoke-WebRequest https://storage.googleapis.com/chrome-inf
 set PATH=%CD%\depot_tools;%PATH%
 set DEPOT_TOOLS_WIN_TOOLCHAIN=0
 call gclient
-set DEPOT_TOOLS_UPDATE=0
 
 echo =====[ Fetching V8 ]=====
 mkdir v8
 cd v8
 call fetch v8
+echo target_os = ['win'] >> .gclient
 cd v8
 call gclient config https://chromium.googlesource.com/v8/v8
 call git checkout %V8_VERSION%
-cd test\test262\data
-call git config --system core.longpaths true
-call git restore *
-cd ..\..\..\
 call gclient sync
 
 
 echo =====[ Building V8 ]=====
-call gn gen out.gn\x64.release --args="target_os=""win"" target_cpu=""x64"" dcheck_always_on=false treat_warnings_as_errors=false v8_use_external_startup_data=false is_official_build=true v8_enable_test_features=false v8_monolithic=false v8_enable_i18n_support=false is_debug=false is_clang=false strip_debug_info=true v8_symbol_level=0 v8_enable_pointer_compression=false is_component_build=true v8_static_library=false"
+call python .\tools\dev\v8gen.py x64.release -vv -- target_os="""win""" target_cpu="""x64""" dcheck_always_on=false treat_warnings_as_errors=false v8_use_external_startup_data=false is_official_build=true v8_enable_test_features=false v8_monolithic=false v8_enable_i18n_support=false is_debug=false is_clang=false strip_debug_info=true v8_symbol_level=0 v8_enable_pointer_compression=false is_component_build=true v8_static_library=false
 
 call ninja -C out.gn\x64.release -t clean
 call ninja -C out.gn\x64.release v8
