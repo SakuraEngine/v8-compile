@@ -11,7 +11,7 @@ powershell -command "Invoke-WebRequest https://storage.googleapis.com/chrome-inf
 7z x depot_tools.zip -o*
 set PATH=%CD%\depot_tools;%PATH%
 set DEPOT_TOOLS_WIN_TOOLCHAIN=0
-@REM set DEPOT_TOOLS_UPDATE=0
+set DEPOT_TOOLS_UPDATE=0
 cd depot_tools
 git reset --hard 580b4ff
 cd ..
