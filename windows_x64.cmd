@@ -3,8 +3,7 @@ set V8_VERSION=%1
 cd %HOMEPATH%
 
 echo =====[ Getting Depot Tools ]=====
-powershell -command "Invoke-WebRequest https://storage.googleapis.com/chrome-infra/depot_tools.zip -O depot_tools.zip"
-7z x depot_tools.zip -o*
+call git clone https://chromium.googlesource.com/chromium/tools/depot_tools
 set PATH=%CD%\depot_tools;%PATH%
 set GYP_MSVS_VERSION=2019
 set DEPOT_TOOLS_WIN_TOOLCHAIN=0
