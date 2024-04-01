@@ -15,6 +15,7 @@ mkdir v8
 cd v8
 call fetch v8
 cd v8
+gclient config https://chromium.googlesource.com/v8/v8
 call git checkout %V8_VERSION%
 cd test\test262\data
 call git config --system core.longpaths true
