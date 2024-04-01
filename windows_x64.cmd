@@ -7,6 +7,7 @@ call git clone https://chromium.googlesource.com/chromium/tools/depot_tools
 set PATH=%CD%\depot_tools;%PATH%
 set DEPOT_TOOLS_WIN_TOOLCHAIN=0
 call gclient
+set DEPOT_TOOLS_UPDATE=0
 
 echo =====[ Fetching V8 ]=====
 mkdir v8
