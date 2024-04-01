@@ -1,0 +1,29 @@
+name: build 11.4
+
+on: [push, pull_request]
+
+env:
+    V8_VERSION: 11.4-lkgr
+
+jobs:
+  build-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest ]
+        arch: [ x64 ]
+        toolchain: [ msvc ]
+    
+    name: ${{ matrix.toolchain }} + ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run build script
+        shell: cmd
+        run: |
+          cd %GITHUB_WORKSPACE%
+          call .\windows_64.cmd ${{env.V8_VERSION}}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: v8-windows-${{ matrix.arch }}
+          path: v8/v8/output/windows-x64-release/**/*
