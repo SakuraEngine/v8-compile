@@ -20,6 +20,8 @@ echo =====[ Fetching V8 ]=====
 mkdir v8
 cd v8
 call fetch v8
+
+echo =====[ Checking out V8 Version ]=====
 cd v8
 call git checkout %V8_VERSION%
 call gclient sync -D
