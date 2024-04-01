@@ -15,6 +15,7 @@ cd v8
 call fetch v8
 cd v8
 call git checkout %V8_VERSION%
+call git pull
 call git clean -fdx
 cd test\test262\data
 call git config --system core.longpaths true
