@@ -24,10 +24,13 @@ cd v8
 call gclient config https://chromium.googlesource.com/v8/v8
 call git checkout %V8_VERSION%
 call gclient sync
+cd depot_tools
+call git reset --hard 8d16d4a
+cd ..
 
 
 echo =====[ Building V8 ]=====
-call python .\tools\dev\v8gen.py x64.release -vv -- target_os="""win""" target_cpu="""x64""" dcheck_always_on=false treat_warnings_as_errors=false v8_use_external_startup_data=false is_official_build=true v8_enable_test_features=false v8_monolithic=false v8_enable_i18n_support=false is_debug=false is_clang=false strip_debug_info=true v8_symbol_level=0 v8_enable_pointer_compression=false is_component_build=true v8_static_library=false
+call gn gen --args="target_os=""win"" target_cpu=""x64"" dcheck_always_on=false treat_warnings_as_errors=false v8_use_external_startup_data=false is_official_build=true v8_enable_test_features=false v8_monolithic=false v8_enable_i18n_support=false is_debug=false is_clang=false strip_debug_info=true v8_symbol_level=0 v8_enable_pointer_compression=false is_component_build=true v8_static_library=false"
 
 call ninja -C out.gn\x64.release -t clean
 call ninja -C out.gn\x64.release v8
