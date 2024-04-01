@@ -20,9 +20,7 @@ echo =====[ Fetching V8 ]=====
 mkdir v8
 cd v8
 call fetch v8
-echo target_os = ['win'] >> .gclient
 cd v8
-call gclient config https://chromium.googlesource.com/v8/v8
 call git checkout %V8_VERSION%
 call gclient sync -D
 
