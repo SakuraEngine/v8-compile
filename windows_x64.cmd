@@ -16,11 +16,12 @@ cd v8
 call fetch v8
 cd v8
 call git checkout %V8_VERSION%
+call git clean -fdx
 cd test\test262\data
 call git config --system core.longpaths true
 call git restore *
 cd ..\..\..\
-call gclient sync
+call gclient sync -D
 
 
 echo =====[ Building V8 ]=====
