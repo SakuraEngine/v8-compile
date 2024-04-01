@@ -13,7 +13,7 @@ set PATH=%CD%\depot_tools;%PATH%
 set DEPOT_TOOLS_WIN_TOOLCHAIN=0
 set DEPOT_TOOLS_UPDATE=0
 cd depot_tools
-git reset --hard 580b4ff
+git reset --hard cd076ba
 cd ..
 call gclient
 
