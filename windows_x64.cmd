@@ -41,7 +41,7 @@ md %LIB_OUTPUT_DIR%
 copy /Y out.gn\x64.release\v8.dll %DLL_OUTPUT_DIR%
 copy /Y out.gn\x64.release\v8_libbase.dll %DLL_OUTPUT_DIR%
 copy /Y out.gn\x64.release\v8_libplatform.dll %DLL_OUTPUT_DIR%
-copy /Y out.gn\x64.release\third_party_zlib.dll.dll %DLL_OUTPUT_DIR%
+copy /Y out.gn\x64.release\third_party_zlib.dll %DLL_OUTPUT_DIR%
 
 copy /Y out.gn\x64.release\v8.dll.lib %LIB_OUTPUT_DIR%
 copy /Y out.gn\x64.release\v8_libplatform.dll.lib %LIB_OUTPUT_DIR%
@@ -49,4 +49,4 @@ copy /Y out.gn\x64.release\v8_libplatform.dll.lib %LIB_OUTPUT_DIR%
 copy /Y out.gn\x64.release\v8.dll.pdb %DLL_OUTPUT_DIR%
 copy /Y out.gn\x64.release\v8_libbase.dll.pdb %DLL_OUTPUT_DIR%
 copy /Y out.gn\x64.release\v8_libplatform.dll.pdb %DLL_OUTPUT_DIR%
-copy /Y out.gn\x64.release\third_party_zlib.dll.dll.pdb %DLL_OUTPUT_DIR%
+copy /Y out.gn\x64.release\third_party_zlib.dll.pdb %DLL_OUTPUT_DIR%
