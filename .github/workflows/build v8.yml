@@ -6,6 +6,9 @@ on:
       v8_version:
         description: 'V8 version, see branches of https://chromium.googlesource.com/v8/v8.git'
         required: true
+      release_tag:
+        description: 'Release tag'
+        required: true
 
 env:
   V8_VERSION: ${{ github.event.inputs.v8_version }}
@@ -41,12 +44,12 @@ jobs:
     steps:
       - uses: actions/download-artifact@v1
         with:
-          name: v8_bin
+          name: v8-windows-x64
           path: v8_bin/
 
       - name: Create Release Asset
         run: |
-          cd v8_bin/ && tar cvfz ../v8_bin_${{env.V8_VERSION}}.tgz v8_9.4 && cd -
+          cd v8_bin/ && tar cvfz ../v8_${{github.event.inputs.release_tag}}.tgz v8_9.4 && cd -
       
       - name: Create Release
         id: create_release
@@ -54,8 +57,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: V8_${{env.V8_VERSION}}
-          release_name: V8_${{env.V8_VERSION}}
+          tag_name: V8_${{github.event.inputs.release_tag}}
+          release_name: V8_${{github.event.inputs.release_tag}}
           draft: false
           prerelease: false
               
@@ -66,6 +69,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./v8_bin_${{env.V8_VERSION}}.tgz
-          asset_name: v8_bin_${{env.V8_VERSION}}.tgz
+          asset_path: ./v8_${{github.event.inputs.release_tag}}.tgz
+          asset_name: v8_${{github.event.inputs.release_tag}}.tgz
           asset_content_type: application/tgz
