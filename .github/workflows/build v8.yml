@@ -1,14 +1,17 @@
-name: build 11.4
+name: build v8
 
 on: 
   workflow_dispatch:
     inputs:
+      v8_version:
+        description: 'V8 version, see branches of https://chromium.googlesource.com/v8/v8.git'
+        required: true
       tag_date:
-        description: 'tag date'     
+        description: 'date tag, format: YYMMDD'     
         required: true
 
 env:
-  V8_VERSION: 11.4-lkgr
+  V8_VERSION: ${{ github.event.inputs.tag_date.v8_version }}
 
 jobs:
   build-windows:
