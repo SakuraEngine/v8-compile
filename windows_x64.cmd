@@ -12,10 +12,10 @@ powershell -command "Invoke-WebRequest https://storage.googleapis.com/chrome-inf
 set PATH=%CD%\depot_tools;%PATH%
 call gclient
 set DEPOT_TOOLS_WIN_TOOLCHAIN=0
-set DEPOT_TOOLS_UPDATE=0
-cd depot_tools
+@REM set DEPOT_TOOLS_UPDATE=0
+@REM cd depot_tools
 @REM call git reset --hard cd076ba
-cd ..
+@REM cd ..
 
 echo =====[ Fetching V8 ]=====
 mkdir v8
@@ -28,7 +28,7 @@ call git checkout %V8_VERSION%
 call gclient sync -D
 
 echo =====[ Building V8 ]=====
-call gn gen out.gn\x64.release --args="target_os=""win"" target_cpu=""x64"" dcheck_always_on=false treat_warnings_as_errors=false v8_use_external_startup_data=false is_official_build=false v8_enable_test_features=false v8_monolithic=false v8_enable_i18n_support=false is_debug=false is_clang=false strip_debug_info=true v8_symbol_level=0 v8_enable_pointer_compression=false is_component_build=true v8_static_library=false"
+call gn gen out.gn\x64.release --args="target_os=""win"" target_cpu=""x64"" dcheck_always_on=false treat_warnings_as_errors=false v8_use_external_startup_data=false is_official_build=false v8_enable_test_features=false v8_monolithic=false v8_enable_i18n_support=false is_debug=false is_clang=true strip_debug_info=true v8_symbol_level=0 v8_enable_pointer_compression=false is_component_build=true v8_static_library=false"
 
 call ninja -C out.gn\x64.release -t clean
 call ninja -C out.gn\x64.release v8
