@@ -14,7 +14,7 @@ call gclient
 set DEPOT_TOOLS_WIN_TOOLCHAIN=0
 set DEPOT_TOOLS_UPDATE=0
 cd depot_tools
-call git reset --hard cd076ba
+@REM call git reset --hard cd076ba
 cd ..
 
 echo =====[ Fetching V8 ]=====
