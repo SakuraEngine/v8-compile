@@ -14,8 +14,8 @@ jobs:
         shell: cmd
         run: |
           mkdir artifact
-          copy ./windows_x64.cmd ./artifact/
-          copy ./LICENSE ./artifact/
+          copy /Y windows_x64.cmd artifact/
+          copy /Y LICENSE artifact/
       
       - name: Upload artifact
         uses: actions/upload-artifact@v2
