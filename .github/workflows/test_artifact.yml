@@ -13,7 +13,7 @@ jobs:
       - name: Copy artifact
         shell: cmd
         run: |
-          mkdir ./artifact
+          mkdir artifact
           copy ./windows_x64.cmd ./artifact/
           copy ./LICENSE ./artifact/
       
