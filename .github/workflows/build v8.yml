@@ -32,7 +32,7 @@ jobs:
         run: |
           cd %GITHUB_WORKSPACE%
           call .\windows_x64.cmd ${{env.V8_VERSION}}
-      
+
       - uses: actions/upload-artifact@v2
         with:
           name: v8-windows-${{ matrix.arch }}
@@ -45,11 +45,11 @@ jobs:
       - uses: actions/download-artifact@v1
         with:
           name: v8-windows-x64
-          path: v8_bin/
+          path: build_release/
 
       - name: Create Release Asset
         run: |
-          cd v8_bin/ && tar cvfz ../v8-windows-x64.tgz v8_9.4 && cd -
+          cd build_release/ && tar -cvfz ../v8-windows-x64.tgz windows-x64-release && cd -
       
       - name: Create Release
         id: create_release
@@ -57,18 +57,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: V8_${{github.event.inputs.release_tag}}
-          release_name: V8_${{github.event.inputs.release_tag}}
+          tag_name: v8_${{github.event.inputs.release_tag}}
+          release_name: v8_${{github.event.inputs.release_tag}}
           draft: false
           prerelease: false
               
-      - name: Upload Release
+      - name: Upload Windows
         #id: upload-release-asset 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./v8_${{github.event.inputs.release_tag}}.tgz
-          asset_name: v8_${{github.event.inputs.release_tag}}.tgz
+          asset_path: ./v8-windows-x64.tgz
+          asset_name: v8-windows-x64.tgz
           asset_content_type: application/tgz
