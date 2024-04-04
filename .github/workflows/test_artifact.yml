@@ -31,7 +31,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: artifact
-          path: ./build_release/
+          path: ./build_release/artifact
       
       - name: Display downloaded artifact
         run: |
@@ -48,12 +48,18 @@ jobs:
           draft: false
           prerelease: false
       
+      - name: Create Release Asset
+        run: |
+          cd build_release/
+          tar -cvfz ../artifact.tgz artifact
+          cd ../
+      
       - name: Upload artifact
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build_release/artifact.zip
-          asset_name: artifact.zip
-          asset_content_type: application/zip
+          asset_path: artifact.tgz
+          asset_name: artifact.tgz
+          asset_content_type: application/tgz
