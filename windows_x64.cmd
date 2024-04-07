@@ -33,6 +33,11 @@ call gn gen out.gn\x64.release --args="target_os=""win"" target_cpu=""x64"" dche
 call ninja -C out.gn\x64.release -t clean
 call ninja -C out.gn\x64.release v8
 
+echo =====[ Copying Include ]=====
+set INC_OUTPUT_DIR=output\windows-x64-release\include
+md %INC_OUTPUT_DIR%
+xcopy include %INC_OUTPUT_DIR% /s/h/e/k/f/c
+
 echo =====[ Copying Product ]=====
 set DLL_OUTPUT_DIR=output\windows-x64-release\bin
 set LIB_OUTPUT_DIR=output\windows-x64-release\lib
