@@ -64,6 +64,7 @@ jobs:
           mkdir package
           cd artifact
           for dir in `ls -d */`; do
+            dir=${dir%*/}
             tar -vz -cf ../package/$dir.tgz $dir
             xmake l hash.sha256 ../package/$dir.tgz
           done
