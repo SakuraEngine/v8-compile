@@ -62,12 +62,26 @@ jobs:
         run: |
           cd build_release
           mkdir package
+          
+          # package tgz
           cd artifact
           for dir in `ls -d */`; do
             dir=${dir%*/}
             tar -vz -cf ../package/$dir.tgz $dir
-            xmake l hash.sha256 ../package/$dir.tgz
           done
+
+          # build manifest
+          cd ../package
+          xmake l ../../scripts/build_manifest.lua *.tgz manifest.json
+          
+          # build release files
+          files=build_release/package/manifest.json
+          for pkg in *.tgz; do
+            pkg_name=`basename $pkg .tgz`
+            files="$files $pkg_name:build_release/package/$pkg"
+          done
+          echo "RELEASE_FILES=$files" >> $GITHUB_ENV
+
           cd ../../
       
       - name: Upload release files
@@ -78,4 +92,4 @@ jobs:
           tag: ${{ inputs.tag }}
           draft: false
           prerelease: false
-          files: build_release/package
+          files: ${{ env.RELEASE_FILES }}

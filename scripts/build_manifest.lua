@@ -7,5 +7,5 @@ function main(package_path, manifest_path)
         package_sha = hash.sha256(package)
         manifest[package_name] = package_sha
     end
-    json.savefile(manifest_path, manifest)
+    json.savefile(path.join(os.curdir(), manifest_path), manifest)
 end
