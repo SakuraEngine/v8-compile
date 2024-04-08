@@ -98,4 +98,5 @@ jobs:
           tag: ${{ inputs.tag }}
           draft: false
           prerelease: false
+          gzip: folders
           files: ${{ env.RELEASE_FILES }}
