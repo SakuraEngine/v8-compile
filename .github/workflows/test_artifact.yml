@@ -74,7 +74,7 @@ jobs:
           # build manifest
           echo =====[ build manifest ]=====
           cd ../package
-          xmake l ../../scripts/build_manifest.lua *.tgz manifest.json
+          xmake l "../../scripts/build_manifest.lua" "*.tgz" "manifest.json"
           
           # collect release files
           echo =====[ collect release files ]=====
