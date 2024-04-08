@@ -26,8 +26,8 @@ jobs:
         shell: cmd
         run: |
           cd %GITHUB_WORKSPACE%
-          set ARTIFACT_PATH=artifact/test-windows-${{ matrix.toolchain }}-${{ matrix.arch }}
-          mkdir %ARTIFACT_PATH%
+          set ARTIFACT_PATH=artifact/test-windows-${{ matrix.arch }}-${{ matrix.toolchain }}
+          mkdir "%ARTIFACT_PATH%"
           copy /Y windows_x64.cmd "%ARTIFACT_PATH%"
           copy /Y LICENSE "%ARTIFACT_PATH%"
       
