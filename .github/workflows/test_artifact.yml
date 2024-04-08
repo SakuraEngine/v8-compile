@@ -62,23 +62,12 @@ jobs:
           )
           cd ..
       
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: test_artifact
-          draft: false
-          prerelease: false
-      
       - name: Upload release files
         uses: meeDamian/github-release@2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref }}
-          name: test_artfact
+          name: ${{ inputs.tag }}
+          tag: ${{ inputs.tag }}
           draft: false
           prerelease: false
           files: build_release/ziped/
