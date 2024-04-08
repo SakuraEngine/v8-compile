@@ -64,6 +64,7 @@ jobs:
           mkdir package
           
           # package tgz
+          echo =====[ package tgz ]=====
           cd artifact
           for dir in `ls -d */`; do
             dir=${dir%*/}
@@ -71,10 +72,12 @@ jobs:
           done
 
           # build manifest
+          echo =====[ build manifest ]=====
           cd ../package
           xmake l ../../scripts/build_manifest.lua *.tgz manifest.json
           
-          # build release files
+          # collect release files
+          echo =====[ collect release files ]=====
           files=build_release/package/manifest.json
           for pkg in *.tgz; do
             pkg_name=`basename $pkg .tgz`

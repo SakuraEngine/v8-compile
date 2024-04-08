@@ -5,6 +5,7 @@ function main(package_path, manifest_path)
     for _, package in ipairs(packages) do
         package_name = path.filename(package)
         package_sha = hash.sha256(package)
+        printf("package: %s, sha256: %s\n", package_name, package_sha)
         manifest[package_name] = package_sha
     end
     json.savefile(path.join(os.curdir(), manifest_path), manifest)
