@@ -26,9 +26,11 @@ jobs:
       - name: Copy artifact
         shell: cmd
         run: |
-          mkdir artifact/test-windows-${{ matrix.toolchain }}-${{ matrix.arch }}
-          copy /Y windows_x64.cmd artifact
-          copy /Y LICENSE artifact
+          cd %GITHUB_WORKSPACE%
+          set ARTIFACT_DIR=artifact/test-windows-${{ matrix.toolchain }}-${{ matrix.arch }}
+          mkdir %ARTIFACT_DIR%
+          copy /Y windows_x64.cmd %ARTIFACT_DIR%
+          copy /Y LICENSE %ARTIFACT_DIR%
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
