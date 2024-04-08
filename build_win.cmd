@@ -13,6 +13,9 @@ if defined V8_ENV_HAS_DEPOT_TOOLS (
 if defined V8_CACHED_REPO (
     echo ----- NOTE: will use cached v8 repo
 )
+if defined V8_NO_COMPILE (
+    echo ----- NOTE: won't compile v8
+)
 
 @REM echo =====[ Setup git info ]=====
 @REM git config --global user.name "V8 Windows Builder"
@@ -65,6 +68,9 @@ if exist %V8_PATCH_PATH% (
     echo ----- Patch not found: %V8_PATCH_PATH%
 )
 call python %V8_BUILD_ROOT%\scripts\remove_zc_inline.py ./build/config/compiler/BUILD.gn
+if defined V8_NO_COMPILE (
+    exit 0
+)
 
 echo =====[ Building V8 ]=====
 set V8_BUILD_DIR=out\%V8_BUILD_ARCH%.%V8_BUILD_TOOLCHAIN%
@@ -73,9 +79,14 @@ call python %V8_BUILD_ROOT%\scripts\make_gn_args.py %V8_BUILD_DIR%\args.gn win %
 call ninja -C %V8_BUILD_DIR% -t clean
 call ninja -C %V8_BUILD_DIR% v8
 
+echo =====[ Copying Include ]=====
+set INC_OUTPUT_DIR=%V8_BUILD_ROOT%\build_output\windows-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%\include
+md %INC_OUTPUT_DIR%
+xcopy include %INC_OUTPUT_DIR% /s/h/e/k/f/c
+
 echo =====[ Copying Product ]=====
-set DLL_OUTPUT_DIR=%V8_BUILD_ROOT%\%V8_BUILD_ARCH%.%V8_BUILD_TOOLCHAIN%
-set LIB_OUTPUT_DIR=%V8_BUILD_ROOT%\%V8_BUILD_ARCH%.%V8_BUILD_TOOLCHAIN%
+set DLL_OUTPUT_DIR=%V8_BUILD_ROOT%\build_output\windows-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%\bin
+set LIB_OUTPUT_DIR=%V8_BUILD_ROOT%\build_output\windows-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%\lib
 md %DLL_OUTPUT_DIR%
 md %LIB_OUTPUT_DIR%
 copy /Y %V8_BUILD_DIR%\v8.dll %DLL_OUTPUT_DIR%
