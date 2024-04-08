@@ -54,7 +54,6 @@ jobs:
           cd ..
       
       - name: Create Release Asset
-        shell: cmd
         run: |
           cd build_release
           for item in `ls $dir`; do
