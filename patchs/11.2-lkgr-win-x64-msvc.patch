@@ -1,0 +1,25 @@
+From bf0e2bca39ab8916050b13742a5f8b51e3b37363 Mon Sep 17 00:00:00 2001
+From: zhu-rong <211103376@qq.com>
+Date: Mon, 8 Apr 2024 18:49:57 +0800
+Subject: [PATCH] fix msvc error
+
+---
+ src/wasm/function-body-decoder-impl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/wasm/function-body-decoder-impl.h b/src/wasm/function-body-decoder-impl.h
+index 326979621ff..e9d9460f547 100644
+--- a/src/wasm/function-body-decoder-impl.h
++++ b/src/wasm/function-body-decoder-impl.h
+@@ -2380,7 +2380,7 @@ class WasmDecoder : public Decoder {
+   }
+ 
+   // TODO(clemensb): This is only used by the interpreter; move there.
+-  V8_EXPORT_PRIVATE std::pair<uint32_t, uint32_t> StackEffect(const byte* pc) {
++  std::pair<uint32_t, uint32_t> StackEffect(const byte* pc) {
+     WasmOpcode opcode = static_cast<WasmOpcode>(*pc);
+     // Handle "simple" opcodes with a fixed signature first.
+     const FunctionSig* sig = WasmOpcodes::Signature(opcode);
+-- 
+2.44.0.windows.1
+
