@@ -83,7 +83,7 @@ jobs:
           echo =====[ collect release files ]=====
           files=build_release/package/manifest.json
           for pkg in *.tgz; do
-            pkg_name=`basename $pkg .tgz`
+            pkg_name=`basename $pkg`
             files="$files $pkg_name:build_release/package/$pkg"
           done
           echo "RELEASE_FILES=$files" >> $GITHUB_ENV
