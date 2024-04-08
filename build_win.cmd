@@ -3,15 +3,15 @@ if not defined V8_BUILD_ROOT (
 )
 
 echo =====[ Environment ]=====
-echo "V8_BUILD_ROOT: %V8_BUILD_ROOT%"
-echo "V8_VERSION: %V8_VERSION%"
-echo "V8_BUILD_ARCH: %V8_BUILD_ARCH%"
-echo "V8_BUILD_TOOLCHAIN: %V8_BUILD_TOOLCHAIN%"
+echo ----- V8_BUILD_ROOT: %V8_BUILD_ROOT%
+echo ----- V8_VERSION: %V8_VERSION%
+echo ----- V8_BUILD_ARCH: %V8_BUILD_ARCH%
+echo ----- V8_BUILD_TOOLCHAIN: %V8_BUILD_TOOLCHAIN%
 if defined V8_ENV_HAS_DEPOT_TOOLS (
-    echo "NOTE: using enviroment depot tools"
+    echo ----- NOTE: using enviroment depot tools
 )
-if defined V8_CLEAN_UP_AFTER_BUILD (
-    echo "NOTE: will clean up after build"
+if defined V8_CACHED_REPO (
+    echo ----- NOTE: will use cached v8 repo
 )
 
 @REM echo =====[ Setup git info ]=====
@@ -35,22 +35,34 @@ if not defined V8_ENV_HAS_DEPOT_TOOLS (
 )
 
 echo =====[ Fetching V8 ]=====
-mkdir v8
-cd v8
-call fetch v8
+if not defined V8_CACHED_REPO (
+    mkdir v8
+    cd v8
+    call fetch v8
+) else (
+    echo ----- cleaning v8 repo
+    cd v8/v8
+    call git reset --hard
+    call git clean -fdx
+
+    echo ----- cleaing build script repo
+    cd build
+    call git reset --hard
+    call git clean -fdx
+)
 
 echo =====[ Checking out V8 Version ]=====
-cd v8
+cd %V8_BUILD_ROOT%/v8/v8
 call git checkout %V8_VERSION%
 call gclient sync -D
 
 echo =====[ Patching v8 ]=====
 set V8_PATCH_PATH=%V8_BUILD_ROOT%\patchs\%V8_VERSION%-win-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%.patch
-if exist V8_PATCH_PATH (
-    echo "Applying patch: %V8_PATCH_PATH%"
-    call git apply --cached --reject 
+if exist %V8_PATCH_PATH% (
+    echo ----- Applying patch: %V8_PATCH_PATH%
+    call git apply --cached --reject  %V8_PATCH_PATH%
 ) else (
-    echo "Patch not found: %V8_PATCH_PATH"
+    echo ----- Patch not found: %V8_PATCH_PATH%
 )
 call python %V8_BUILD_ROOT%\scripts\remove_zc_inline.py ./build/config/compiler/BUILD.gn
 
@@ -80,9 +92,3 @@ copy /Y %V8_BUILD_DIR%\v8.dll.pdb %DLL_OUTPUT_DIR%
 copy /Y %V8_BUILD_DIR%\v8_libbase.dll.pdb %DLL_OUTPUT_DIR%
 copy /Y %V8_BUILD_DIR%\v8_libplatform.dll.pdb %DLL_OUTPUT_DIR%
 copy /Y %V8_BUILD_DIR%\third_party_zlib.dll.pdb %DLL_OUTPUT_DIR%
-
-echo =====[ Clean up ]=====
-if defined V8_CLEAN_UP_AFTER_BUILD (
-    rmdir %V8_BUILD_ROOT%\v8 /S /Q
-    rmdir %V8_BUILD_ROOT%\depot_tools /S / Q
-)

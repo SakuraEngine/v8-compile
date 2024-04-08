@@ -8,11 +8,16 @@ parser.add_argument("arch", help="architecture to build", type=str)
 parser.add_argument("toolchain", help="toolchain to build", type=str)
 args = parser.parse_args()
 
+
+def _config_boolean(value: bool) -> "str":
+    return "true" if value else "false"
+
+
 # build content
 content = f'''
 target_os="{args.plat}"
 target_cpu="{args.arch}"
-is_clang={"true" if args.toolchain == "clang-cl" else "false"}
+is_clang={_config_boolean(args.toolchain)}
 dcheck_always_on=false
 treat_warnings_as_errors=false
 v8_use_external_startup_data=false
@@ -27,7 +32,7 @@ v8_enable_pointer_compression=false
 is_component_build=true
 v8_static_library=false
 use_custom_libcxx=false
-use_lld=false"
+use_lld=false
 '''
 with open(args.path, 'w', encoding='utf-8') as f:
     f.write(content)
