@@ -1,4 +1,4 @@
-name: build v8
+name: build win
 
 on: 
   workflow_dispatch:
@@ -34,47 +34,73 @@ jobs:
           set V8_VERSION=${{env.V8_VERSION}}
           set V8_BUILD_ARCH=${{ matrix.arch }}
           set V8_TOOLCHAIN=${{ matrix.toolchain }}
-          call build_win.bat
+          call build_win.cmd
 
       - uses: actions/upload-artifact@v4
         with:
-          name: v8-windows-${{ matrix.arch }}
-          path: v8/v8/output/windows-${{ matrix.arch }}-release/**/*
+          name: windows-${{ matrix.arch }}-${{ matrix.toolchain }}
+          path: build_output/windows-${{ matrix.arch }}-${{ matrix.toolchain }}
 
   release:
     runs-on: ubuntu-latest
     needs: [build-windows]
     steps:
-      - name: Download artifacts
+      - name: Install xmake
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+      
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: v8-windows-x64
-          path: build_release/v8-windows-x64
+          path: build_release/artifact
+          merge-multiple: true
       
-      - name: Build release package
+      - name: Display downloaded artifact
         run: |
           cd build_release
-          tar -vz -cf v8-windows-x64.tgz v8-windows-x64
+          ls -R
           cd ..
       
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release Asset
+        run: |
+          cd build_release
+          mkdir package
+          
+          # package tgz
+          echo =====[ package tgz ]=====
+          cd artifact
+          for dir in `ls -d */`; do
+            dir=${dir%*/}
+            tar -vz -cf ../package/$dir.tgz $dir
+          done
+
+          # build manifest
+          echo =====[ build manifest ]=====
+          cd ../package
+          xmake l "../../scripts/build_manifest.lua" "*.tgz" "manifest.json"
+          
+          # collect release files
+          echo =====[ collect release files ]=====
+          files=build_release/package/manifest.json
+          for pkg in *.tgz; do
+            pkg_name=`basename $pkg`
+            files="$files $pkg_name:build_release/package/$pkg"
+          done
+          echo "RELEASE_FILES=$files" >> $GITHUB_ENV
+
+          cd ../../
+      
+      - name: Upload release files
+        uses: meeDamian/github-release@2.0
         with:
-          tag_name: v8_${{github.event.inputs.release_tag}}
-          release_name: v8_${{github.event.inputs.release_tag}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ inputs.release_tag }}
+          tag: ${{ inputs.release_tag }}
           draft: false
           prerelease: false
-              
-      - name: Upload artifact
-        #id: upload-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build_release/v8-windows-x64.tgz
-          asset_name: v8-windows-x64.tgz
-          asset_content_type: application/tgz
+          gzip: false
+          files: ${{ env.RELEASE_FILES }}
