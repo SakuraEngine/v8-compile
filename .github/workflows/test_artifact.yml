@@ -62,7 +62,7 @@ jobs:
         run: |
           cd build_release
           mkdir ziped
-          for item in `ls $dir`; do
+          for item in `ls -d */`; do
             tar -vz -cf ziped/$item.tgz $item
             xmake l hash.sha256 ziped/$item.tgz
           done
