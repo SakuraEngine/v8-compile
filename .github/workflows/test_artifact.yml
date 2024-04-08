@@ -78,4 +78,4 @@ jobs:
           tag: ${{ inputs.tag }}
           draft: false
           prerelease: false
-          files: build_release/ziped/
+          files: build_release/package
