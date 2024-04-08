@@ -33,7 +33,7 @@ jobs:
           cd %GITHUB_WORKSPACE%
           set V8_VERSION=${{env.V8_VERSION}}
           set V8_BUILD_ARCH=${{ matrix.arch }}
-          set V8_TOOLCHAIN=${{ matrix.toolchain }}
+          set V8_BUILD_TOOLCHAIN=${{ matrix.toolchain }}
           call build_win.cmd
 
       - uses: actions/upload-artifact@v4
