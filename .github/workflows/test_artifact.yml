@@ -78,6 +78,7 @@ jobs:
           echo =====[ build manifest ]=====
           cd ../package
           xmake l "../../scripts/build_manifest.lua" "*.tgz" "manifest.json"
+          echo "MANIFEST_SHA=`xmake l hash.sha256 manifest.json`" >> $GITHUB_ENV
           
           # collect release files
           echo =====[ collect release files ]=====
@@ -100,3 +101,4 @@ jobs:
           prerelease: false
           gzip: false
           files: ${{ env.RELEASE_FILES }}
+          body: manifest sha256 is "${{ env.MANIFEST_SHA }}"
