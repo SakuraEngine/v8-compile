@@ -1,16 +1,7 @@
-From bf0e2bca39ab8916050b13742a5f8b51e3b37363 Mon Sep 17 00:00:00 2001
-From: zhu-rong <211103376@qq.com>
-Date: Mon, 8 Apr 2024 18:49:57 +0800
-Subject: [PATCH] fix msvc error
-
----
- src/wasm/function-body-decoder-impl.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/src/wasm/function-body-decoder-impl.h b/src/wasm/function-body-decoder-impl.h
-index 326979621ff..e9d9460f547 100644
---- a/src/wasm/function-body-decoder-impl.h
-+++ b/src/wasm/function-body-decoder-impl.h
+diff --git forkSrcPrefix/src/wasm/function-body-decoder-impl.h forkDstPrefix/src/wasm/function-body-decoder-impl.h
+index 326979621ff45a1a559c264999b64e5a0f9c1844..e9d9460f547b63e0e9bcb8c38504aa70f12d9b8f 100644
+--- forkSrcPrefix/src/wasm/function-body-decoder-impl.h
++++ forkDstPrefix/src/wasm/function-body-decoder-impl.h
 @@ -2380,7 +2380,7 @@ class WasmDecoder : public Decoder {
    }
  
@@ -20,6 +11,3 @@ index 326979621ff..e9d9460f547 100644
      WasmOpcode opcode = static_cast<WasmOpcode>(*pc);
      // Handle "simple" opcodes with a fixed signature first.
      const FunctionSig* sig = WasmOpcodes::Signature(opcode);
--- 
-2.44.0.windows.1
-

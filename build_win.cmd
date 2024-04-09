@@ -64,6 +64,7 @@ set V8_PATCH_PATH=%V8_BUILD_ROOT%\patchs\%V8_VERSION%-win-%V8_BUILD_ARCH%-%V8_BU
 if exist %V8_PATCH_PATH% (
     echo ----- Applying patch: %V8_PATCH_PATH%
     call git apply --cached --reject  %V8_PATCH_PATH%
+    call git checkout -- .
 ) else (
     echo ----- Patch not found: %V8_PATCH_PATH%
 )
