@@ -39,7 +39,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows-${{ matrix.arch }}-${{ matrix.toolchain }}
-          path: build_output/windows-${{ matrix.arch }}-${{ matrix.toolchain }}
+          path: build_output/
 
   release:
     runs-on: ubuntu-latest
