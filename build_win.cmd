@@ -1,12 +1,14 @@
 if not defined V8_BUILD_ROOT (
     set V8_BUILD_ROOT=%GITHUB_WORKSPACE%
 )
+set V8_BUILD_PLAT=windows
 
 echo =====[ Environment ]=====
 echo ----- V8_BUILD_ROOT: %V8_BUILD_ROOT%
 echo ----- V8_VERSION: %V8_VERSION%
 echo ----- V8_BUILD_ARCH: %V8_BUILD_ARCH%
 echo ----- V8_BUILD_TOOLCHAIN: %V8_BUILD_TOOLCHAIN%
+echo ----- V8_BUILD_MODE: %V8_BUILD_MODE%
 if defined V8_ENV_HAS_DEPOT_TOOLS (
     echo ----- NOTE: using enviroment depot tools
 )
@@ -35,6 +37,9 @@ if not defined V8_ENV_HAS_DEPOT_TOOLS (
     @REM cd depot_tools
     @REM call git reset --hard cd076ba
     @REM cd ..
+) else (
+    call gclient
+    set DEPOT_TOOLS_WIN_TOOLCHAIN=0
 )
 
 echo =====[ Fetching V8 ]=====
@@ -76,7 +81,7 @@ if defined V8_NO_COMPILE (
 echo =====[ Building V8 ]=====
 set V8_BUILD_DIR=out\%V8_BUILD_ARCH%.%V8_BUILD_TOOLCHAIN%
 call gn gen %V8_BUILD_DIR%
-call python %V8_BUILD_ROOT%\scripts\make_gn_args.py %V8_BUILD_DIR%\args.gn win %V8_BUILD_ARCH% %V8_BUILD_TOOLCHAIN%
+call python %V8_BUILD_ROOT%\scripts\make_gn_args.py %V8_BUILD_DIR%\args.gn win 
 call ninja -C %V8_BUILD_DIR% -t clean
 call ninja -C %V8_BUILD_DIR% v8
 
