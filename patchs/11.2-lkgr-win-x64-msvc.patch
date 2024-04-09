@@ -1,0 +1,13 @@
+diff --git forkSrcPrefix/src/wasm/function-body-decoder-impl.h forkDstPrefix/src/wasm/function-body-decoder-impl.h
+index 326979621ff45a1a559c264999b64e5a0f9c1844..e9d9460f547b63e0e9bcb8c38504aa70f12d9b8f 100644
+--- forkSrcPrefix/src/wasm/function-body-decoder-impl.h
++++ forkDstPrefix/src/wasm/function-body-decoder-impl.h
+@@ -2380,7 +2380,7 @@ class WasmDecoder : public Decoder {
+   }
+ 
+   // TODO(clemensb): This is only used by the interpreter; move there.
+-  V8_EXPORT_PRIVATE std::pair<uint32_t, uint32_t> StackEffect(const byte* pc) {
++  std::pair<uint32_t, uint32_t> StackEffect(const byte* pc) {
+     WasmOpcode opcode = static_cast<WasmOpcode>(*pc);
+     // Handle "simple" opcodes with a fixed signature first.
+     const FunctionSig* sig = WasmOpcodes::Signature(opcode);
