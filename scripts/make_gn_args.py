@@ -42,18 +42,32 @@ is_clang={_config_boolean(v8_build_toolchain == "clang-cl")}
 
 # mode
 if v8_build_mode == "debug":
-    pass
+    content += f'''
+is_debug = true
+v8_enable_backtrace = true
+v8_enable_slow_dchecks = false
+v8_optimized_debug = false
+'''
 elif v8_build_mode == "release":
     content += f'''
-    dcheck_always_on=false
-    is_debug=false
-    strip_debug_info=true
-    v8_symbol_level=0
-    '''
+is_debug=false
+dcheck_always_on=false
+strip_debug_info=true
+v8_symbol_level=0
+'''
 elif v8_build_mode == "releasedbg":
-    pass
+    content += f'''
+is_debug = true
+v8_enable_backtrace = true
+v8_enable_slow_dchecks = false
+v8_optimized_debug = true
+'''
 else:
     raise ValueError(f"Unknown build mode: {v8_build_mode}")
+
+print("----- begin gn args")
+print(content)
+print("----- end gn args")
 
 with open(args.path, 'w', encoding='utf-8') as f:
     f.write(content)

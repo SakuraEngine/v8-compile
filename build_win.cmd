@@ -1,7 +1,21 @@
 if not defined V8_BUILD_ROOT (
     set V8_BUILD_ROOT=%GITHUB_WORKSPACE%
 )
-set V8_BUILD_PLAT=windows
+if not defined V8_VERSION (
+    echo ----- error: V8_VERSION not set
+    exit 1
+)
+if not defined V8_BUILD_ARCH (
+    echo ----- error: V8_BUILD_ARCH not set
+    exit 1
+)
+if not defined V8_BUILD_TOOLCHAIN (
+    echo ----- error: V8_BUILD_TOOLCHAIN not set
+    exit 1
+)
+if not defined V8_BUILD_MODE (
+    echo ----- error: V8_BUILD_MODE not set
+)
 
 echo =====[ Environment ]=====
 echo ----- V8_BUILD_ROOT: %V8_BUILD_ROOT%
@@ -17,6 +31,11 @@ if defined V8_CACHED_REPO (
 )
 if defined V8_NO_COMPILE (
     echo ----- NOTE: won't compile v8
+)
+if defined V8_ERROR_RECOMPILE (
+    cd v8/v8
+    set V8_BUILD_DIR=out\%V8_BUILD_ARCH%.%V8_BUILD_TOOLCHAIN%.%V8_BUILD_MODE%
+    goto CONTINUE_COMPILE
 )
 
 @REM echo =====[ Setup git info ]=====
@@ -62,50 +81,81 @@ if not defined V8_CACHED_REPO (
 echo =====[ Checking out V8 Version ]=====
 cd %V8_BUILD_ROOT%/v8/v8
 call git checkout %V8_VERSION%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 call gclient sync -D
+if %ERRORLEVEL% NEQ 0 goto ERROR
 
 echo =====[ Patching v8 ]=====
-set V8_PATCH_PATH=%V8_BUILD_ROOT%\patchs\%V8_VERSION%-win-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%.patch
+set V8_PATCH_PATH=%V8_BUILD_ROOT%\patchs\%V8_VERSION%-win-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%-%V8_BUILD_MODE%.patch
 if exist %V8_PATCH_PATH% (
     echo ----- Applying patch: %V8_PATCH_PATH%
     call git apply --cached --reject  %V8_PATCH_PATH%
+    if %ERRORLEVEL% NEQ 0 goto ERROR
     call git checkout -- .
+    if %ERRORLEVEL% NEQ 0 goto ERROR
 ) else (
     echo ----- Patch not found: %V8_PATCH_PATH%
 )
 call python %V8_BUILD_ROOT%\scripts\remove_zc_inline.py ./build/config/compiler/BUILD.gn
+if %ERRORLEVEL% NEQ 0 goto ERROR
 if defined V8_NO_COMPILE (
     exit 0
 )
 
 echo =====[ Building V8 ]=====
-set V8_BUILD_DIR=out\%V8_BUILD_ARCH%.%V8_BUILD_TOOLCHAIN%
+set V8_BUILD_DIR=out\%V8_BUILD_ARCH%.%V8_BUILD_TOOLCHAIN%.%V8_BUILD_MODE%
 call gn gen %V8_BUILD_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 call python %V8_BUILD_ROOT%\scripts\make_gn_args.py %V8_BUILD_DIR%\args.gn win 
+if %ERRORLEVEL% NEQ 0 goto ERROR
 call ninja -C %V8_BUILD_DIR% -t clean
+if %ERRORLEVEL% NEQ 0 goto ERROR
+:CONTINUE_COMPILE
 call ninja -C %V8_BUILD_DIR% v8
+if %ERRORLEVEL% NEQ 0 goto ERROR
 
 echo =====[ Copying Include ]=====
-set INC_OUTPUT_DIR=%V8_BUILD_ROOT%\build_output\windows-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%\include
+set INC_OUTPUT_DIR=%V8_BUILD_ROOT%\build_output\windows-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%-%V8_BUILD_MODE%\include
 md %INC_OUTPUT_DIR%
 xcopy include %INC_OUTPUT_DIR% /s/h/e/k/f/c
+if %ERRORLEVEL% NEQ 0 goto ERROR
 
 echo =====[ Copying Product ]=====
-set DLL_OUTPUT_DIR=%V8_BUILD_ROOT%\build_output\windows-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%\bin
-set LIB_OUTPUT_DIR=%V8_BUILD_ROOT%\build_output\windows-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%\lib
+set DLL_OUTPUT_DIR=%V8_BUILD_ROOT%\build_output\windows-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%-%V8_BUILD_MODE%\bin
+set LIB_OUTPUT_DIR=%V8_BUILD_ROOT%\build_output\windows-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%-%V8_BUILD_MODE%\lib
 md %DLL_OUTPUT_DIR%
 md %LIB_OUTPUT_DIR%
 copy /Y %V8_BUILD_DIR%\v8.dll %DLL_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 copy /Y %V8_BUILD_DIR%\v8_libbase.dll %DLL_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 copy /Y %V8_BUILD_DIR%\v8_libplatform.dll %DLL_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 copy /Y %V8_BUILD_DIR%\third_party_zlib.dll %DLL_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 
 copy /Y %V8_BUILD_DIR%\v8.dll.lib %LIB_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 copy /Y %V8_BUILD_DIR%\v8_libbase.dll.lib %LIB_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 copy /Y %V8_BUILD_DIR%\v8_libplatform.dll.lib %LIB_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 copy /Y %V8_BUILD_DIR%\third_party_zlib.dll.lib %LIB_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 
 copy /Y %V8_BUILD_DIR%\v8.dll.pdb %DLL_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 copy /Y %V8_BUILD_DIR%\v8_libbase.dll.pdb %DLL_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 copy /Y %V8_BUILD_DIR%\v8_libplatform.dll.pdb %DLL_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
 copy /Y %V8_BUILD_DIR%\third_party_zlib.dll.pdb %DLL_OUTPUT_DIR%
+if %ERRORLEVEL% NEQ 0 goto ERROR
+
+echo ===== [ Build Success ] =====
+exit 0
+
+:ERROR
+echo ===== [ Build Failed ] =====
+echo ----- error: %ERRORLEVEL%
+exit 1

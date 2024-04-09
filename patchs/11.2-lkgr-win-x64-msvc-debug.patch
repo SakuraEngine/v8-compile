@@ -1,0 +1,29 @@
+diff --git forkSrcPrefix/src/base/division-by-constant.h forkDstPrefix/src/base/division-by-constant.h
+index 4b9f4a873c289cca8fc0cd530500a4e0291e36fb..e38e4ea28e54f817dd318f57b174916b2ae734f9 100644
+--- forkSrcPrefix/src/base/division-by-constant.h
++++ forkDstPrefix/src/base/division-by-constant.h
+@@ -21,9 +21,9 @@ namespace base {
+ // The magic numbers for division via multiplication, see Warren's "Hacker's
+ // Delight", chapter 10.
+ template <class T>
+-struct EXPORT_TEMPLATE_DECLARE(V8_BASE_EXPORT) MagicNumbersForDivision {
++struct MagicNumbersForDivision {
+   static_assert(std::is_integral_v<T>);
+-  MagicNumbersForDivision(T m, unsigned s, bool a)
++  inline MagicNumbersForDivision(T m, unsigned s, bool a)
+       : multiplier(m), shift(s), add(a) {}
+   bool operator==(const MagicNumbersForDivision& rhs) const {
+     return multiplier == rhs.multiplier && shift == rhs.shift && add == rhs.add;
+diff --git forkSrcPrefix/src/wasm/function-body-decoder-impl.h forkDstPrefix/src/wasm/function-body-decoder-impl.h
+index 326979621ff45a1a559c264999b64e5a0f9c1844..e9d9460f547b63e0e9bcb8c38504aa70f12d9b8f 100644
+--- forkSrcPrefix/src/wasm/function-body-decoder-impl.h
++++ forkDstPrefix/src/wasm/function-body-decoder-impl.h
+@@ -2380,7 +2380,7 @@ class WasmDecoder : public Decoder {
+   }
+ 
+   // TODO(clemensb): This is only used by the interpreter; move there.
+-  V8_EXPORT_PRIVATE std::pair<uint32_t, uint32_t> StackEffect(const byte* pc) {
++  std::pair<uint32_t, uint32_t> StackEffect(const byte* pc) {
+     WasmOpcode opcode = static_cast<WasmOpcode>(*pc);
+     // Handle "simple" opcodes with a fixed signature first.
+     const FunctionSig* sig = WasmOpcodes::Signature(opcode);
