@@ -17,7 +17,7 @@ def _config_boolean(value: bool) -> "str":
 content = f'''
 target_os="{args.plat}"
 target_cpu="{args.arch}"
-is_clang={_config_boolean(args.toolchain)}
+is_clang={_config_boolean(args.toolchain == "clang-cl")}
 dcheck_always_on=false
 treat_warnings_as_errors=false
 v8_use_external_startup_data=false
