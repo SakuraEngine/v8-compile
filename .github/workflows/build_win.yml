@@ -82,7 +82,7 @@ jobs:
           echo =====[ build manifest ]=====
           cd ../package
           xmake l "../../scripts/build_manifest.lua" "*.tgz" "manifest.json"
-          echo "MANIFEST_SHA=`xmake l hash.sha256 manifest.json`" >> $GITHUB_ENV
+          echo "MANIFEST_SHA=`xmake l "../../scripts/get_sha.lua" manifest.json`" >> $GITHUB_ENV
 
           # collect release files
           echo =====[ collect release files ]=====
