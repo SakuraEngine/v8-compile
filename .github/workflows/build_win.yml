@@ -23,7 +23,7 @@ jobs:
         toolchain: [ msvc, clang-cl ]
         mode: [ release, debug, releasedbg ]
 
-    name: ${{ matrix.toolchain }} + ${{ matrix.arch }}
+    name: ${{ matrix.toolchain }} + ${{ matrix.arch }} + ${{ matrix.mode }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
