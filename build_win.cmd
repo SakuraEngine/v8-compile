@@ -37,6 +37,9 @@ if defined V8_ERROR_RECOMPILE (
     set V8_BUILD_DIR=out\%V8_BUILD_ARCH%.%V8_BUILD_TOOLCHAIN%.%V8_BUILD_MODE%
     goto CONTINUE_COMPILE
 )
+if defined V8_VERBOSE_BUILD (
+    echo ----- NOTE: verbose build
+)
 
 @REM echo =====[ Setup git info ]=====
 @REM git config --global user.name "V8 Windows Builder"
@@ -98,6 +101,8 @@ if exist %V8_PATCH_PATH% (
 )
 call python %V8_BUILD_ROOT%\scripts\remove_zc_inline.py ./build/config/compiler/BUILD.gn
 if %ERRORLEVEL% NEQ 0 goto ERROR
+@REM call python %V8_BUILD_ROOT%\scripts\remove_zc_dllexport_inline.py ./build/config/win/BUILD.gn
+@REM if %ERRORLEVEL% NEQ 0 goto ERROR
 if defined V8_NO_COMPILE (
     exit 0
 )
@@ -108,11 +113,19 @@ call gn gen %V8_BUILD_DIR%
 if %ERRORLEVEL% NEQ 0 goto ERROR
 call python %V8_BUILD_ROOT%\scripts\make_gn_args.py %V8_BUILD_DIR%\args.gn win 
 if %ERRORLEVEL% NEQ 0 goto ERROR
-call ninja -C %V8_BUILD_DIR% -t clean
-if %ERRORLEVEL% NEQ 0 goto ERROR
-:CONTINUE_COMPILE
-call ninja -C %V8_BUILD_DIR% v8
-if %ERRORLEVEL% NEQ 0 goto ERROR
+if defined V8_VERBOSE_BUILD (
+    call ninja -C %V8_BUILD_DIR% -t clean
+    if %ERRORLEVEL% NEQ 0 goto ERROR -v
+    :CONTINUE_COMPILE
+    call ninja -C %V8_BUILD_DIR% v8 -v
+    if %ERRORLEVEL% NEQ 0 goto ERROR
+) else (
+    call ninja -C %V8_BUILD_DIR% -t clean
+    if %ERRORLEVEL% NEQ 0 goto ERROR
+    :CONTINUE_COMPILE
+    call ninja -C %V8_BUILD_DIR% v8
+    if %ERRORLEVEL% NEQ 0 goto ERROR
+)
 
 echo =====[ Copying Include ]=====
 set INC_OUTPUT_DIR=%V8_BUILD_ROOT%\build_output\windows-%V8_BUILD_ARCH%-%V8_BUILD_TOOLCHAIN%-%V8_BUILD_MODE%\include
